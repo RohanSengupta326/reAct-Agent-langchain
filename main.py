@@ -1,3 +1,30 @@
+"""
+This is the similar implementation of agent with reAct prompt but how under the hood tool calling is handled
+as shown previously in ice-breaker
+
+Manual Step-by-Step Execution:
+
+Uses a while loop to manually handle each step of the agent's thought process
+Explicitly tracks intermediate steps in memory
+Manages the back-and-forth between thinking and tool execution
+
+
+Text-Based Parsing:
+
+Uses a specific text format (Question/Thought/Action/Action Input/Observation)
+Relies on ReActSingleInputOutputParser to extract actions from the text output
+The agent's thinking is explicitly included in the prompt via "agent_scratchpad"
+
+
+Tool Management:
+
+Tools are manually executed using a helper function (find_tool_by_name)
+Results are formatted and added to intermediate steps
+
+
+"""
+
+
 from typing import Union, List
 
 from dotenv import load_dotenv
