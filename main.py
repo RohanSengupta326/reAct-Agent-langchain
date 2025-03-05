@@ -97,7 +97,10 @@ if __name__ == "__main__":
     """
     # this {agent_scratchpad} is to store the previous iteration of the llm.
 
-    # with partial we are inputting the dynamic variables in the prompt
+    """
+    with partial we are inputting the static variables in the prompt
+    meaning this variable won't change in every iteration.
+    """
     prompt = PromptTemplate.from_template(template=template).partial(
         # render_text_description is used to simply convert the tool names to text, as the llm only accepts text as input.
         tools=render_text_description(tools),
@@ -134,6 +137,26 @@ if __name__ == "__main__":
     # \nActionInput:
     # type format
     # which ReActSingleInputOutputParser() expects. so it will throw an error.
+
+    """
+    these are dynamic variables in the prompt which are needed to be passed like this in a 
+    dict. so that in every iteration it can change. when we invoke the agent.
+    """
+
+    """ also could have done :
+    
+    agent = (prompt | llm | ReActSingleInputOutputParser())
+
+    .... 
+    agent_step = agent.invoke({
+        "input": "What is the length of 'DOG' in characters?",
+        "agent_scratchpad": format_log_to_str(intermediate_steps),
+    })
+
+    same thing. 
+
+    it takes the input variables and puts in the prompt in its places.
+    """
     agent = (
             {
                 "input": lambda x: x["input"],
@@ -182,6 +205,9 @@ if __name__ == "__main__":
     while not isinstance(agent_step, AgentFinish):
         agent_step = agent.invoke(
             {
+                # if this input also included a input variable we would have to use another PromptTemplate
+                # with simple input variable
+                """ e.g:  prompt_template.format_prompt(name_of_person=name) """
                 "input": "What is the length of 'DOG' in characters?",
                 "agent_scratchpad": intermediate_steps,
             }
